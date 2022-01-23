@@ -1,29 +1,100 @@
 import logging
-import re
-from typing import Union,Optional
 
-from df_engine.core.keywords import TRANSITIONS, RESPONSE
-from df_engine.core import Actor,Context
+from df_engine.core.keywords import GLOBAL, TRANSITIONS, RESPONSE
+from flow_logic.response import *
+from flow_logic import condition as custom_cnd
 import df_engine.conditions as cnd
+from fetch_logic.celeb import basic_details
+from typing import Union
+from df_engine.core.plot import Plot
 
-logger = logging.getLogger(__name__)
 
-def turn_handler(
-    in_request: str, ctx: Union[Context, str, dict], actor: Actor, true_out_response: Optional[str] = None
-):
-    # Context.cast - gets an object type of [Context, str, dict] returns an object type of Context
-    ctx = Context.cast(ctx)
-    # Add in current context a next request of user
-    ctx.add_request(in_request)
-    # pass the context into actor and it returns updated context with actor response
-    ctx = actor(ctx)
-    # get last actor response from the context
-    out_response = ctx.last_response
-    # the next condition branching needs for testing
-    if true_out_response is not None and true_out_response != out_response:
-        msg = f"in_request={in_request} -> true_out_response != out_response: {true_out_response} != {out_response}"
-        raise Exception(msg)
-    else:
-        logging.info(f"in_request={in_request} -> {out_response}")
-    return out_response, ctx
+class FlowGraph:
+    def __init__(self, celeb_basics: basic_details.BasicDetails, logger: logging.Logger):
+        self.basic_details = celeb_basics
+        self.responses = Responses(celeb_basics=celeb_basics, logger=logger)
+        self.logger = logger
+        self.plot = {
+            "global": {
+                "start": {
+                    RESPONSE: "",
+                    TRANSITIONS: {
+                        "intro": cnd.regexp(r"hi|hello", re.IGNORECASE),
+                    }
+                },
+                "intro": {
+                    RESPONSE: self.responses.bot_intro,
+                    TRANSITIONS: {
+                        ("celeb", "start"): custom_cnd.talk_about,
+                    }
+                },
+                "fallback": {
+                    RESPONSE: "Oops!! something went wrong. Starting again...",
+                    TRANSITIONS: {
+                        ("global", "intro"): cnd.true()
+                    }
+                }
+            },
+            "celeb": {
+                "start": {
+                    RESPONSE: self.responses.celeb_start,
+                    TRANSITIONS: {
+                        ("celeb", "age"): custom_cnd.birth_date,
+                    }
+                },
+                "age": {
+                    RESPONSE: self.responses.celeb_age,
+                    TRANSITIONS: {
+                        ("global", "start"): cnd.exact_match("mera naam joker")
+                    }
+                }
+            }
+        }
+
+
+"""
+responses
+
+def initialize_plot_dependencies(cb: basic_details.BasicDetails, logger: logging.Logger):
+    global responses
+    responses = Responses(celeb_basics=cb, logger=logger)
+
+
+plot = {
+    "global": {
+        "start": {
+            RESPONSE: "",
+            TRANSITIONS: {
+                "intro": cnd.regexp(r"hi|hello", re.IGNORECASE),
+            }
+        },
+        "intro": {
+            RESPONSE: responses.bot_intro,
+            TRANSITIONS: {
+                ("celeb", "start"): custom_cnd.talk_about,
+            }
+        },
+        "fallback": {
+            RESPONSE: "Oops!! something went wrong. Starting again...",
+            TRANSITIONS: {
+                ("global", "intro"): cnd.true()
+            }
+        }
+    },
+    "celeb": {
+        "start": {
+            RESPONSE: responses.celeb_start,
+            TRANSITIONS: {
+                ("celeb", "age"): custom_cnd.birth_date,
+            }
+        },
+        "age": {
+            RESPONSE: responses.celeb_age,
+            TRANSITIONS: {
+                ("global", "start"): cnd.exact_match("mera naam joker")
+            }
+        }
+    }
+}
+"""
 
