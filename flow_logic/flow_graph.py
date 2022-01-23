@@ -31,12 +31,24 @@ plot = {
             RESPONSE: response.celeb_start,
             TRANSITIONS: {
                 ("celeb", "age"): custom_cnd.birth_date,
+                ("celeb", "profession"): custom_cnd.celeb_profession,
+                ("celeb", "start"): custom_cnd.talk_about,
+            }
+        },
+        "profession": {
+            RESPONSE: response.celeb_profession,
+            TRANSITIONS: {
+                ("celeb", "start"): cnd.exact_match("restart"),
+                ("global", "intro"): custom_cnd.talk_about,
+                ("celeb", "profession"): custom_cnd.celeb_profession,
             }
         },
         "age": {
             RESPONSE: response.celeb_age,
             TRANSITIONS: {
-                ("global", "start"): cnd.exact_match("mera naam joker")
+                ("celeb", "start"): cnd.exact_match("restart"),
+                ("global", "intro"): custom_cnd.talk_about,
+                ("celeb", "profession"): custom_cnd.celeb_profession,
             }
         }
     }
