@@ -1,9 +1,8 @@
-import smtplib
-
 from df_engine.core import Context, Actor
 from typing import Any
 import re
 from fetch_logic.celeb import basic_details, bio_answers
+from fetch_logic.translation import cloud_translate
 
 
 def bot_intro(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
@@ -29,6 +28,7 @@ def celeb_start(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
     request = ctx.last_request
     if request == "text" or request is None:
         return
+    request = cloud_translate.check_and_translate_fwd(ctx)
     p = re.compile("(i (want to|wanna)|let's) talk about (.+)")
     name = process_utterance(request, p, 3)
     if len(name) == 0:
@@ -38,15 +38,16 @@ def celeb_start(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
     result = basic_details.get_basic_details(ctx.misc.get("name"))
     ctx.misc["id"] = result["_id"]
     if result is not None:
-        return "Yes, we can talk about {}".format(ctx.misc.get("name"))
+        return cloud_translate.check_and_translate_back(ctx,"Yes, we can talk about {}".format(ctx.misc.get("name")))
     else:
-        return "Sorry,I don't know about {}." \
-               " But there are a lot of other celebs we can talk about.".format(ctx.misc.get("name"))
+        return cloud_translate.check_and_translate_back(ctx,"Sorry,I don't know about {}." \
+               " But there are a lot of other celebs we can talk about.".format(ctx.misc.get("name")))
 
 
 def celeb_age(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
     if ctx.last_request == "text" or ctx.last_request is None:
         return
+    ctx.add_request(cloud_translate.check_and_translate_fwd(ctx))
     p = re.compile("(what is|when (was|were)) (.+) (age|born).*")
     name = process_utterance(ctx.last_request, p, 3)
     if len(name) == 0:
@@ -55,15 +56,16 @@ def celeb_age(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
         ctx.misc["name"] = name.lower()
     celeb_name = ctx.misc.get("name")
     celeb_details = basic_details.get_basic_details(celeb_name=celeb_name)
-    if celeb_details is not None:
-        return "{0} was born in {1}".format(celeb_name, celeb_details["birth_year"])
+    if celeb_details is not None and len(celeb_details["birth_year"]) > 0:
+        return cloud_translate.check_and_translate_back(ctx, "{0} was born in {1}".format(celeb_name, celeb_details["birth_year"]))
     else:
-        return "Sorry, I couldn't find birth information."
+        return cloud_translate.check_and_translate_back(ctx, "Sorry, I couldn't find birth information.")
 
 
 def celeb_profession(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
     if ctx.last_request == "text" or ctx.last_request is None:
         return
+    ctx.add_request(cloud_translate.check_and_translate_fwd(ctx))
     p = re.compile("what is (.+'s|his|her) profession.*")
     name = process_utterance(ctx.last_request, p, 1)
     if len(name) == 0:
@@ -73,12 +75,28 @@ def celeb_profession(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
     celeb_name = ctx.misc.get("name")
     celeb_details = basic_details.get_basic_details(celeb_name=celeb_name)
     if celeb_details is not None:
-        return "{0}'s primary profession is {1}".format(celeb_name, celeb_details["primary_profession"][0])
+        return cloud_translate.check_and_translate_back(ctx, "{0}'s primary profession"
+                                             " is {1}".format(celeb_name, celeb_details["primary_profession"][0]))
     else:
-        return "Sorry, I couldn't find profession information."
+        return cloud_translate.check_and_translate_back(ctx,"Sorry, I couldn't find profession information.")
 
 
 def celeb_resp_from_bio(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
     if ctx.last_request == "text" or ctx.last_request is None:
         return
-    return bio_answers.get_celeb_answer(ctx, ctx.last_request)
+    ctx.add_request(cloud_translate.check_and_translate_fwd(ctx))
+    return cloud_translate.check_and_translate_back(ctx, bio_answers.get_celeb_answer(ctx, ctx.last_request))
+
+
+def switch_to_hindi(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
+    if ctx.last_request == "text" or ctx.last_request is None:
+        return
+    ctx.misc["lang"] = "hi"
+    return "अब हम हिंदी में बात कर सकते हैं"
+
+
+def switch_to_english(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
+    if ctx.last_request == "text" or ctx.last_request is None:
+        return
+    ctx.misc["lang"] = "en"
+    return "Now we can talk in English"

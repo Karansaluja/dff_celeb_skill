@@ -11,3 +11,5 @@ BIO_COLLECTION = "bio"
 MODEL_NAME = "deepset/roberta-base-squad2"
 CACHE_LOCATION = "fetch_logic/hugging_face_cache"
 HTML_CLEANR = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
+GCP_KEY = "dff-auth-key.json"
+PARENT_PROJECT = "projects/pacific-apex-339213"

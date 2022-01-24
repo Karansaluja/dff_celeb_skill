@@ -3,6 +3,7 @@ from flow_logic import flow_handler,flow_graph
 from fetch_logic.adhoc_data_insert import top_actors_data
 import logging
 import os
+from fetch_logic.translation import cloud_translate
 import time
 from fetch_logic.mongo_db import mongo_db
 from fetch_logic.hugging_face import hugging_face
@@ -29,7 +30,6 @@ if __name__ == '__main__':
         print(f"{in_request:} -> {out_response}")
         total_time = time.time() - st_time
         print(f"exec time = {total_time:.3f}s")
-
     """
     query = {"name": re.compile("Tom Cruise", re.IGNORECASE)}
     record = mongo_db.find_one_record(constants.CELEBS_DB, constants.BIO_COLLECTION, query)
@@ -37,5 +37,6 @@ if __name__ == '__main__':
     #result = re.search(r".* (his|her|.+) .*", "when was tom cruise born", re.IGNORECASE)
     #print(result.groups())
     """
-
+    #cloud_translate.test_language_translation("who am i")
+    #cloud_translate.test_language_translation_api("who am i")
 

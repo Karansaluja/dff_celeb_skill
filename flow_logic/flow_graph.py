@@ -6,6 +6,26 @@ import flow_logic.condition as custom_cnd
 from df_engine.core import Actor
 
 plot = {
+    GLOBAL: {
+        TRANSITIONS: {
+            ("lang", "switch_hindi"): cnd.exact_match("switch to hindi"),
+            ("lang", "switch_english"): cnd.exact_match("switch to english")
+        }
+    },
+    "lang": {
+        "switch_hindi": {
+            RESPONSE: response.switch_to_hindi,
+            TRANSITIONS: {
+                ("celeb", "start"): custom_cnd.talk_about,
+            }
+        },
+        "switch_english": {
+            RESPONSE: response.switch_to_english,
+            TRANSITIONS: {
+                ("celeb", "start"): custom_cnd.talk_about
+            }
+        }
+    },
     "global": {
         "start": {
             RESPONSE: "",
@@ -61,6 +81,8 @@ plot = {
                 ("global", "intro"): cnd.exact_match("restart"),
                 ("celeb", "age"): custom_cnd.birth_date,
                 ("celeb", "profession"): custom_cnd.celeb_profession,
+                ("lang", "switch_hindi"): cnd.exact_match("switch to hindi"),
+                ("lang", "switch_english"): cnd.exact_match("switch to english"),
                 ("celeb", "ml_answer"): custom_cnd.any_celeb_query,
             }
         }
