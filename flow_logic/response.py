@@ -3,7 +3,7 @@ import smtplib
 from df_engine.core import Context, Actor
 from typing import Any
 import re
-from fetch_logic.celeb import basic_details
+from fetch_logic.celeb import basic_details, bio_answers
 
 
 def bot_intro(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
@@ -20,7 +20,6 @@ def bot_intro(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
 def process_utterance(text: str, pattern, group_num: int) -> str:
     result = pattern.search(text.lower())
     if result is not None:
-        print(result.groups())
         return result.group(group_num)
     print("Sorry, I didn't get it. You can try asking again.")
     return ""
@@ -35,8 +34,9 @@ def celeb_start(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
     if len(name) == 0:
         return
     if name not in ["him", "her", "them"]:
-        ctx.misc["name"] = name
+        ctx.misc["name"] = name.lower()
     result = basic_details.get_basic_details(ctx.misc.get("name"))
+    ctx.misc["id"] = result["_id"]
     if result is not None:
         return "Yes, we can talk about {}".format(ctx.misc.get("name"))
     else:
@@ -52,7 +52,7 @@ def celeb_age(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
     if len(name) == 0:
         return
     if name not in ["his", "her", "they", "he", "she", "their"]:
-        ctx.misc["name"] = name
+        ctx.misc["name"] = name.lower()
     celeb_name = ctx.misc.get("name")
     celeb_details = basic_details.get_basic_details(celeb_name=celeb_name)
     if celeb_details is not None:
@@ -69,10 +69,16 @@ def celeb_profession(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
     if len(name) == 0:
         return
     if name not in ["his", "her", "their"]:
-        ctx.misc["name"] = name
+        ctx.misc["name"] = name.lower()
     celeb_name = ctx.misc.get("name")
     celeb_details = basic_details.get_basic_details(celeb_name=celeb_name)
     if celeb_details is not None:
         return "{0}'s primary profession is {1}".format(celeb_name, celeb_details["primary_profession"][0])
     else:
         return "Sorry, I couldn't find profession information."
+
+
+def celeb_resp_from_bio(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
+    if ctx.last_request == "text" or ctx.last_request is None:
+        return
+    return bio_answers.get_celeb_answer(ctx, ctx.last_request)

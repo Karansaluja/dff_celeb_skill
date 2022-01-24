@@ -20,6 +20,4 @@ def turn_handler(
     if true_out_response is not None and true_out_response != out_response:
         msg = f"in_request={in_request} -> true_out_response != out_response: {true_out_response} != {out_response}"
         raise Exception(msg)
-    else:
-        logger.info(f"in_request={in_request} -> {out_response}")
     return out_response, ctx

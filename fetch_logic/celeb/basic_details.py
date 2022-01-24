@@ -9,7 +9,6 @@ logger = logging.getLogger(__name__)
 
 @cached(cache=TTLCache(maxsize=20, ttl=10))
 def get_basic_details(celeb_name):
-    print(celeb_name)
     query = {"name": re.compile(celeb_name, re.IGNORECASE)}
     result = mongo_db.find_one_record(db_name=constants.CELEBS_DB,
                                       collection_name=constants.BASIC_CELEB_COLLECTION, query=query)
