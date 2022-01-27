@@ -96,7 +96,7 @@ mongorestore --db database_name path_to_bson_file
 
 This bot is bilingual. It can answer in both **English** and **Hindi**. This project uses google translate api (https://cloud.google.com/translate/). We are currently providing a service account that can access this service. But this service account will eventually expire. So you'll have to setup your own service account and setup translate api.
 To configure translation api, provide 'GCP_KEY' and 'PARENT_PROJECT' parameters in the constants.constants.py file.
-- GCP_KEY = {gcp-account-key}
+- GCP_KEY = {gcp-account-key-location}
 - PARENT_PROJECT = projects/{gcp-project-name}
 
 -----------
