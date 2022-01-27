@@ -52,7 +52,7 @@ exec time = 4.781s
 ------------
 ## Design
 Below is the flow diagram that explains how queries are answered.
-![alt text for screen readers](dff_flow_diagram.jpeg "Chatbot flow diagram")
+![alt text for screen readers](resources/dff_flow_diagram.jpeg "Chatbot flow diagram")
 
 ------------
 ## Setup
