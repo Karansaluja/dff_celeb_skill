@@ -52,9 +52,10 @@ exec time = 4.781s
 ------------
 ## Design
 Below is the flow diagram that explains how queries are answered.
-
+![alt text for screen readers](dff_flow_diagram.jpeg "Chatbot flow diagram")
 
 ------------
+## Setup
 # Setup DB
 - Install Mongo DB : https://docs.mongodb.com/manual/installation/
 - Create a data directory in your mongoDB installation directory and run the following command
