@@ -18,6 +18,10 @@ def celeb_profession(ctx: Context, actor: Actor, *args, **kwargs) -> bool:
     return re.search(r"what is (.+'s|his|her) profession.*", request, re.IGNORECASE) is not None
 
 
+def celeb_death(ctx: Context, actor: Actor, *args, **kwargs) -> bool:
+    request = cloud_translate.check_and_translate_fwd(ctx)
+    return re.search(r"(when did|is|are) (.+|he|she|they) (die|alive).*", request, re.IGNORECASE) is not None
+
 def any_celeb_query(ctx: Context, actor: Actor, *args, **kwargs) -> bool:
     request = cloud_translate.check_and_translate_fwd(ctx)
     if ctx.misc.get("name") is not None or ctx.misc.get("id") is not None:

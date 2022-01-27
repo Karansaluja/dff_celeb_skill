@@ -13,15 +13,12 @@ def get_ml_answer(query: str, doc: str):
     in_tok = qna_tokenizer.encode_plus(query, doc,
                                        return_tensors='pt', truncation=True, max_length=512)
 
-    # getting scores from tokens
     ans_str_sc, ans_en_sc = qna_model(**in_tok, return_dict=False)
-
-    # getting the position
     ans_st = torch.argmax(ans_str_sc)
     ans_en = torch.argmax(ans_en_sc) + 1
-
-    # ids are then converted to tokens
     ans_tok = qna_tokenizer.convert_ids_to_tokens(in_tok["input_ids"][0][ans_st:ans_en])
-
-    # getting the answer
-    return qna_tokenizer.convert_tokens_to_string(ans_tok)
+    answer = qna_tokenizer.convert_tokens_to_string(ans_tok)
+    if answer != "<s>":
+        return answer
+    else:
+        return "Sorry, I don't have an answer for that. But you can try asking something else."

@@ -51,6 +51,7 @@ plot = {
             RESPONSE: response.celeb_start,
             TRANSITIONS: {
                 ("celeb", "age"): custom_cnd.birth_date,
+                ("celeb", "death"): custom_cnd.celeb_death,
                 ("celeb", "profession"): custom_cnd.celeb_profession,
                 ("celeb", "start"): custom_cnd.talk_about,
                 ("celeb", "ml_answer"): custom_cnd.any_celeb_query,
@@ -62,6 +63,7 @@ plot = {
                 ("celeb", "age"): custom_cnd.birth_date,
                 ("celeb", "profession"): custom_cnd.celeb_profession,
                 ("celeb", "start"): custom_cnd.talk_about,
+                ("celeb", "death"): custom_cnd.celeb_death,
                 ("global", "intro"): cnd.exact_match("restart"),
                 ("celeb", "ml_answer"): custom_cnd.any_celeb_query,
             }
@@ -72,6 +74,17 @@ plot = {
                 ("global", "intro"): cnd.exact_match("restart"),
                 ("celeb", "start"): custom_cnd.talk_about,
                 ("celeb", "profession"): custom_cnd.celeb_profession,
+                ("celeb", "death"): custom_cnd.celeb_death,
+                ("celeb", "ml_answer"): custom_cnd.any_celeb_query,
+            }
+        },
+        "death":{
+            RESPONSE: response.celeb_death,
+            TRANSITIONS: {
+                ("global", "intro"): cnd.exact_match("restart"),
+                ("celeb", "start"): custom_cnd.talk_about,
+                ("celeb", "profession"): custom_cnd.celeb_profession,
+                ("celeb", "age"): custom_cnd.birth_date,
                 ("celeb", "ml_answer"): custom_cnd.any_celeb_query,
             }
         },
@@ -80,6 +93,7 @@ plot = {
             TRANSITIONS: {
                 ("global", "intro"): cnd.exact_match("restart"),
                 ("celeb", "age"): custom_cnd.birth_date,
+                ("celeb", "death"): custom_cnd.celeb_death,
                 ("celeb", "profession"): custom_cnd.celeb_profession,
                 ("lang", "switch_hindi"): cnd.exact_match("switch to hindi"),
                 ("lang", "switch_english"): cnd.exact_match("switch to english"),

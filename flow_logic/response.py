@@ -13,6 +13,13 @@ def bot_intro(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
     When was he born ?
     When was Angelina Jolie born ?
     What are Brad Pitt's popular films?
+    
+    To switch language:
+    switch to hindi
+    switch to english
+    
+    To restart:
+    restart
     '''
 
 
@@ -60,6 +67,25 @@ def celeb_age(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
         return cloud_translate.check_and_translate_back(ctx, "{0} was born in {1}".format(celeb_name, celeb_details["birth_year"]))
     else:
         return cloud_translate.check_and_translate_back(ctx, "Sorry, I couldn't find birth information.")
+
+
+def celeb_death(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
+    if ctx.last_request == "text" or ctx.last_request is None:
+        return
+    ctx.add_request(cloud_translate.check_and_translate_fwd(ctx))
+    p = re.compile("(when did|is|are) (.+|he|she|they) (die|alive).*")
+    name = process_utterance(ctx.last_request, p, 2)
+    if len(name) == 0:
+        return
+    if name not in ["he","she","they"]:
+        ctx.misc["name"] = name.lower()
+    celeb_name = ctx.misc.get("name")
+    celeb_details = basic_details.get_basic_details(celeb_name=celeb_name)
+    if celeb_details is not None and len(celeb_details["death_year"]) > 0:
+        return cloud_translate.check_and_translate_back(ctx, "{0} died in {1}".format(celeb_name,
+                                                                                          celeb_details["death_year"]))
+    else:
+        return cloud_translate.check_and_translate_back(ctx, "I think {0} is still alive.".format(name))
 
 
 def celeb_profession(ctx: Context, actor: Actor, *args, **kwargs) -> Any:
