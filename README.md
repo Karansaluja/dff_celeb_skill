@@ -56,7 +56,17 @@ Below is the flow diagram that explains how queries are answered.
 
 ------------
 ## Setup
-# Setup DB
+
+## Mongo DB Setup
+Basic data of over 11 million celebrities(https://www.imdb.com/interfaces/) on IMDB has been added to mongo db. Mongo Db serves following purposes:
+- Check if celeb exists in database.
+- Get IMDB id of celeb that can be used to fetch other details about celebs from Db or by directly hitting IMDB website.
+- Answer template based queries.
+- Answer queries using ML model by pulling celeb bio from mongo Db.
+
+**Setting up Mongo Db**
+Following are the steps to setup mongo db to smoothely run this chatbot:
+
 - Install Mongo DB : https://docs.mongodb.com/manual/installation/
 - Create a data directory in your mongoDB installation directory and run the following command
 ```
@@ -70,7 +80,7 @@ brew tap mongodb/brew
 brew install mongodb-database-tools
 ```
 
-- To dump your database for backup you call this command on your terminal
+- To dump your database for backup you call this command on your terminal (not required for setup)
 
 ```
 mongodump --db database_name --collection collection_name
@@ -79,14 +89,12 @@ mongodump --db database_name --collection collection_name
 ```
 mongorestore --db database_name path_to_bson_file
 ```
-download bson files from gcp : https://console.cloud.google.com/storage/browser/dff_celeb?project=pacific-apex-339213
+- Relevant data dump for this project is stored on gcp - https://console.cloud.google.com/storage/browser/dff_celeb?project=pacific-apex-339213 . You'll have to create gcp account to access the cloud storage.
+- There are 2 collections **basic_details** and **bio** . Database name is **celeb**. Once you have successfully loaded these collections to mongo db, you are good to go.
 
-add this dump to your locally setup mongo.
+## Language Translation Setup
 
--------
-#Language Translation
-This bot is bilingual(English + Hindi).
-
-Currently it is using gcp account for the translation api, which can be configured using the 'GCP_KEY' and 'PARENT_PROJECT' parameters in the constants.constants.py file.
+This bot is bilingual. It can answer in both **English** and **Hindi**. This project uses google translate api (https://cloud.google.com/translate/). We are currently providing a service account that can access this service. But this service account will eventually expire. So you'll have to setup your own service account and setup translate api.
+To configure translation api, provide 'GCP_KEY' and 'PARENT_PROJECT' parameters in the constants.constants.py file.
 - GCP_KEY = {gcp-account-key}
 - PARENT_PROJECT = projects/{gcp-project-name}
