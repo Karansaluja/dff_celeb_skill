@@ -26,7 +26,6 @@ def check_and_translate_fwd(ctx: Context):
 def check_and_translate_back(ctx: Context, response: str):
     lang = ctx.misc.get("lang")
     if lang is not None and lang == "hi":
-        print(ctx.last_request)
         return translate_query(response, "en", "hi")
     else:
         return response
