@@ -98,3 +98,7 @@ This bot is bilingual. It can answer in both **English** and **Hindi**. This pro
 To configure translation api, provide 'GCP_KEY' and 'PARENT_PROJECT' parameters in the constants.constants.py file.
 - GCP_KEY = {gcp-account-key}
 - PARENT_PROJECT = projects/{gcp-project-name}
+
+-----------
+## Running the Application
+You can use Pycharm to run this application. When you run for the first time it'll take a few minutes to download all the dependencies and ML model. The subsequent runs will be pretty fast. You can start interacting with the chatbot by typing **Hi**
